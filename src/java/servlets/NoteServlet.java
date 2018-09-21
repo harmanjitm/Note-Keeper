@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Clock;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,10 +27,6 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if(!(request.getParameter("edit") == null))
-        {
-            getServletContext().getRequestDispatcher("/WEB-INF/EditNote.jsp").forward(request, response);
-        }
         //variables
         String title;
         String contents;
@@ -41,7 +38,15 @@ public class NoteServlet extends HttpServlet {
         contents = br.readLine();
         //Create new note object
         Note n = new Note(title, contents);
+        //Check if user wants to edit
+        if(!(request.getParameter("edit") == null))
+        {
+            request.setAttribute("note", n);
+            br.close();
+            getServletContext().getRequestDispatcher("/WEB-INF/EditNote.jsp").forward(request, response);
+        }
         request.setAttribute("note", n);
+        br.close();
         //display page
         getServletContext().getRequestDispatcher("/WEB-INF/ViewNote.jsp").forward(request, response);
     }
@@ -55,11 +60,12 @@ public class NoteServlet extends HttpServlet {
         String path = getServletContext().getRealPath("/WEB-INF/note.txt");
         //Create printwriter
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
+        //BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
         //Save contents to file.
-        pw.write(title);
-        pw.write(contents);
+        pw.write(title + "\n" + contents);
         pw.close();
         //display page
         getServletContext().getRequestDispatcher("/WEB-INF/ViewNote.jsp").forward(request, response);
+        //response.sendRedirect(request.getParameter("redirectToClientUrl/Week3Lab_SimpleNoteKeeper/"));
     }
 }
