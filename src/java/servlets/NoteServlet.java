@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.Clock;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -64,8 +63,13 @@ public class NoteServlet extends HttpServlet {
         //Save contents to file.
         pw.write(title + "\n" + contents);
         pw.close();
-        //display page
+        //Read file
+        BufferedReader br = new BufferedReader(new FileReader(new File(path)));
+        title = br.readLine();
+        contents = br.readLine();
+        //Create new note object
+        Note n = new Note(title, contents);
+        request.setAttribute("note", n);
         getServletContext().getRequestDispatcher("/WEB-INF/ViewNote.jsp").forward(request, response);
-        //response.sendRedirect(request.getParameter("redirectToClientUrl/Week3Lab_SimpleNoteKeeper/"));
     }
 }
