@@ -63,10 +63,6 @@ public class NoteServlet extends HttpServlet {
         //Save contents to file.
         pw.write(title + "\n" + contents);
         pw.close();
-        //Read file
-        BufferedReader br = new BufferedReader(new FileReader(new File(path)));
-        title = br.readLine();
-        contents = br.readLine();
         //Create new note object
         Note n = new Note(title, contents);
         request.setAttribute("note", n);
